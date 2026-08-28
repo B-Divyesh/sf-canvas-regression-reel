@@ -95,7 +95,11 @@ npm pack --dry-run
 ```
 
 `npm run dev` starts the documentation and live comparison demo. The static
-deployment root is `dist/site`.
+deployment root is `dist/site`. Its generated service worker precaches the
+current documentation shell for offline use; fingerprinted scripts, styles,
+and responsive hero images are safe to cache immutably, while HTML and
+`sw.js` revalidate on every release. Deploy `dist/site` together with its
+generated `_headers` file so that cache policy is preserved.
 
 ## Privacy and security
 

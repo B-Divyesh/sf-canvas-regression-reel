@@ -80,6 +80,8 @@ included.
   letters, numbers, logos, gradients, UI screenshots, watermark, or illegible
   pseudo-text.” Deployment metadata is stored next to the source PNG during
   generation. Rights: original generated asset created for this repository.
+- The production build fingerprints both responsive WebP derivatives before
+  deployment, so their long-lived immutable cache entries can never point at a
+  later image revision.
 - Demo game frames are rendered at runtime from original Canvas 2D code. Icons
   are hand-authored inline SVG with `currentColor`; no external icon set.
-

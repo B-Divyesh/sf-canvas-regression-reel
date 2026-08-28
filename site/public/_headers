@@ -1,0 +1,22 @@
+# Static-host cache policy. Fingerprinted output is immutable; documents and
+# the worker must be revalidated so releases can activate promptly.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/instrument-reel-*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/privacy/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/terms/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
