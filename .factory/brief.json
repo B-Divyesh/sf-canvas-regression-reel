@@ -1,0 +1,11 @@
+{
+  "slug": "canvas-regression-reel",
+  "title": "Canvas Regression Reel",
+  "territory": "games-creative",
+  "user": "Solo browser-game developers who need visual evidence of rendering regressions, not just headless logic tests and a pile of manual screenshots.",
+  "smallest_useful_product": "An npm recorder/reporter for browser canvas games: capture a seeded input trace, render checkpoint PNGs, compare tolerantly, and emit a self-contained HTML reel.",
+  "success_measure": "On a seeded demo, the tool identifies the first changed checkpoint and creates a reviewable report in CI under two minutes.",
+  "artifact_class": "library-npm",
+  "monetization": "free",
+  "constraints": "Require deterministic seed hooks where possible; mask user-supplied assets in reports; make pixel tolerance explicit; never upload build artifacts by default."
+}
