@@ -3,6 +3,8 @@
 **Work order:** `canvas-regression-reel-repair-1`
 
 **Repair base:** `31408eb542b1ccf7fb2bed6b872c8f43c0f28da1`
+
+**Repair commits:** `25644c5b86cf668f6d4f882428edaace671492b3`, `ad4f1843f7640416f1403b5473b5c6c14ae5baeb`
 **Artifact / deploy root:** npm library; static documentation site at `dist/site`
 
 ## Result
@@ -63,11 +65,33 @@ Production asset budgets remain within the contract: main JS 4.31 kB, CSS
 12.13 kB, mobile hero 24.5 kB, desktop hero 97.3 kB (uncompressed files).
 No third-party assets, telemetry, or upload path were added.
 
-## Deploy and release
+## Deployment and live verification
 
-Deploy the generated `dist/site` directory unchanged, including
-`staticwebapp.config.json`, `_headers`, and the generated `sw.js`. For npm
-release, the factory should publish the packed tarball with its managed
+Deployed `dist/site` with `/opt/fleet/lib/deploy-static.sh
+canvas-regression-reel /work/repo/dist/site` to Azure Static Web Apps. The
+custom domain is live at https://canvas-regression-reel.sociobot.in/.
+
+The live root exactly matched the production build, including these SHA-256
+checksums:
+
+- `index.html`: `870b00563fcc46be8acfbb5d4a12020ce156831aadecea4830bdfaf8061c4be2`
+- `assets/main-CryaYXxN.js`: `660d4816e9e633bd85438feced15515aa36711c6c331871b88a388bfed209021`
+- `assets/styles-C00iEuao.css`: `28c1f533e42effe809840c975cca4f3f50d59a2d122cb4e59f2964592dd935b7`
+- `instrument-reel-cac1b0aee306.webp`: `cac1b0aee30664503d36500827ceba505c61d941b02d75b4b3fa6be3f0bbecc6`
+- `sw.js`: `da77d300618ad9dd8cac6c7a83b1c0325f6c9b976f47370e4c8689011de24f55`
+
+Live headers confirmed `public, max-age=31536000, immutable` for the current
+JS, CSS, and fingerprinted hero image; `/` and `sw.js` return `public,
+max-age=0, must-revalidate`.
+
+`verify-url.sh` against the custom domain reported HTTP 200, 668 ms load,
+zero browser errors, title/lang/one h1/main present, zero missing image alts,
+and zero unlabeled buttons. A second live Playwright check at 1440px and
+390×844 found zero axe serious/critical violations, no console/page errors,
+no third-party requests, a working skip link and End-key tab selection, no
+mobile overflow, and an interactive controlled offline reload at both sizes.
+
+For npm release, the factory should publish the packed tarball with its managed
 credentials; this worker did not publish it.
 
 After the static deployment settles, confirm the live root, `sw.js`, a current
@@ -78,6 +102,4 @@ branch, so live propagation is performed by the factory deployment pipeline.
 
 ## Known gaps
 
-No product behavior gaps remain locally. A fresh live-URL identity/header check
-must occur after the factory deployment has propagated; it cannot be truthfully
-claimed before that external step completes.
+No known product or deployment gaps remain.
