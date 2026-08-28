@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Replay seeded browser-game inputs, compare canvas checkpoints, and review the first visual regression in one local HTML reel.">
+    <meta name="theme-color" content="#f1ead8">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <title>Canvas Regression Reel — see the first frame that changed</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Canvas Regression Reel home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Canvas<br>Regression Reel</span></a>
+      <nav aria-label="Primary navigation">
+        <a href="#demo">Live demo</a>
+        <a href="#usage">Usage</a>
+        <a class="nav-install" href="#install">Install <span aria-hidden="true">↓</span></a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Visual test instrument · v0.1</p>
+          <h1>Find the first frame that changed.</h1>
+          <p class="lede">Replay the same browser-game inputs, compare only the canvas, and leave CI with a short reel of visual evidence—not a screenshot pile.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#install">Install the recorder</a>
+            <a class="text-link" href="#demo">Try the live comparison <span aria-hidden="true">→</span></a>
+          </div>
+          <ul class="proof" aria-label="Key product properties">
+            <li><span aria-hidden="true">●</span> Seeded</li>
+            <li><span aria-hidden="true">●</span> Tolerant</li>
+            <li><span aria-hidden="true">●</span> Local only</li>
+          </ul>
+        </div>
+        <figure class="hero-art">
+          <img src="/instrument-reel.webp" width="1440" height="960" alt="A cream mid-century test instrument showing three sequential platform-game frames" fetchpriority="high">
+          <figcaption>One run. Three checkpoints. The signal lamp marks the first divergence.</figcaption>
+        </figure>
+      </section>
+
+      <section class="demo-section" id="demo" aria-labelledby="demo-title">
+        <div class="section-intro">
+          <p class="kicker">Live comparator / no upload</p>
+          <h2 id="demo-title">Turn one drawing fault into useful evidence.</h2>
+          <p>This miniature seeded run is rendered in your browser. Introduce a regression, move through the reel, and inspect exactly which pixels depart.</p>
+        </div>
+        <div class="instrument" id="instrument">
+          <div class="instrument-bar">
+            <div class="signal-readout" aria-live="polite" aria-atomic="true">
+              <span class="signal-lamp clear" id="signal-lamp" aria-hidden="true"></span>
+              <span><small>Run status</small><strong id="run-status">Within tolerance</strong></span>
+            </div>
+            <div class="meter"><span>Changed pixels</span><strong id="pixel-count">0.000%</strong></div>
+            <div class="meter"><span>First divergence</span><strong id="first-change">None</strong></div>
+          </div>
+          <div class="demo-controls">
+            <div class="control-group">
+              <button class="toggle-control" id="regression-toggle" type="button" aria-pressed="false"><span class="switch-dot" aria-hidden="true"></span>Introduce regression</button>
+              <button class="quiet-control" id="clear-demo" type="button">Clear trace</button>
+            </div>
+            <label class="tolerance-control" for="tolerance"><span>Pixel delta tolerance</span><output id="tolerance-value" for="tolerance">24</output><input id="tolerance" type="range" min="0" max="80" value="24"></label>
+          </div>
+          <div id="empty-demo" class="demo-empty" hidden>
+            <span class="empty-reel" aria-hidden="true">○—○—○</span>
+            <h3>No checkpoints on the reel</h3>
+            <p>A real run starts here before its first capture.</p>
+            <button class="button primary" id="restore-demo" type="button">Load sample trace</button>
+          </div>
+          <div id="reel-demo">
+            <div class="checkpoint-tabs" role="tablist" aria-label="Demo checkpoints">
+              <button role="tab" aria-selected="true" data-checkpoint="0"><span>01</span>Spawn <i aria-hidden="true"></i></button>
+              <button role="tab" aria-selected="false" data-checkpoint="1"><span>02</span>Gap <i aria-hidden="true"></i></button>
+              <button role="tab" aria-selected="false" data-checkpoint="2"><span>03</span>Goal <i aria-hidden="true"></i></button>
+            </div>
+            <div class="viewfinders">
+              <figure><figcaption><span>Baseline</span><b>Approved</b></figcaption><canvas id="baseline-canvas" width="480" height="270" aria-label="Approved baseline game frame"></canvas></figure>
+              <figure><figcaption><span>Current</span><b id="current-label">Matched</b></figcaption><canvas id="current-canvas" width="480" height="270" aria-label="Current game frame"></canvas></figure>
+              <figure><figcaption><span>Difference</span><b id="diff-label">Quiet</b></figcaption><canvas id="diff-canvas" width="480" height="270" aria-label="Pixel difference visualization"></canvas></figure>
+            </div>
+            <p class="canvas-alternative" id="canvas-description">Checkpoint Spawn: the baseline and current frame match; no changed pixels exceed a delta of 24.</p>
+          </div>
+          <div class="instrument-footer"><span>Seed <b>release-42</b></span><span>Viewport <b>960 × 540</b></span><span>Mask <b>HUD 120 × 44</b></span><span id="connection-state">Ready offline</span></div>
+        </div>
+      </section>
+
+      <section class="sequence" aria-labelledby="sequence-title">
+        <div><p class="kicker">The shortest path to certainty</p><h2 id="sequence-title">Record. Replay. Read the signal.</h2></div>
+        <ol>
+          <li><span>01</span><div><h3>Describe the run</h3><p>Name the canvas, seed, inputs, checkpoints, masks, and honest tolerance in one typed config.</p></div></li>
+          <li><span>02</span><div><h3>Replay in Chromium</h3><p>The runner seeds before game code loads, applies exact inputs, and captures canvas pixels only.</p></div></li>
+          <li><span>03</span><div><h3>Review one reel</h3><p>CI points to the first changed checkpoint. Baseline, current, and diff travel together in one HTML file.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="usage" id="usage" aria-labelledby="usage-title">
+        <div class="usage-copy"><p class="kicker">One config / one artifact</p><h2 id="usage-title">Small enough to understand before you trust it.</h2><p>The API stays deliberately narrow. No account, daemon, cloud test farm, or hidden threshold. Masked areas are excluded from comparison and redacted in the report.</p><dl><div><dt>Pass</dt><dd>Exit 0</dd></div><div><dt>Visual change</dt><dd>Exit 1</dd></div><div><dt>Config error</dt><dd>Exit 2</dd></div></dl></div>
+        <div class="code-panel" id="install">
+          <div class="code-toolbar"><span>reel.config.mjs</span><button id="copy-code" type="button" aria-describedby="copy-status">Copy config</button></div>
+          <pre tabindex="0" aria-label="Example reel configuration"><code id="config-code"><span class="code-muted">import</span> { defineConfig } <span class="code-muted">from</span> <span class="code-string">'canvas-regression-reel'</span>
+
+<span class="code-muted">export default</span> defineConfig({
+  url: <span class="code-string">'http://127.0.0.1:4173'</span>,
+  canvas: <span class="code-string">'#game'</span>,
+  seed: <span class="code-string">'release-42'</span>,
+  tolerance: {
+    pixelDelta: <span class="code-number">24</span>,
+    changedPixelRatio: <span class="code-number">0.001</span>
+  },
+  checkpoints: [
+    { name: <span class="code-string">'spawn'</span> },
+    { name: <span class="code-string">'jump-apex'</span>, actions: [
+      { type: <span class="code-string">'key'</span>, key: <span class="code-string">' '</span>, action: <span class="code-string">'press'</span> },
+      { type: <span class="code-string">'wait'</span>, ms: <span class="code-number">280</span> }
+    ] }
+  ]
+})</code></pre>
+          <p id="copy-status" class="copy-status" aria-live="polite">Then run <code>npx canvas-reel run --update</code>.</p>
+        </div>
+      </section>
+
+      <section class="final-callout" aria-labelledby="final-title">
+        <span class="dial" aria-hidden="true"><i></i></span>
+        <div><p class="kicker">Keep the release switch boring</p><h2 id="final-title">Visual proof in under two minutes.</h2><p>Free, open source, and designed for local or CI use.</p></div>
+        <a class="button primary" href="https://www.npmjs.com/package/canvas-regression-reel">View npm package</a>
+      </section>
+    </main>
+    <footer class="site-footer"><a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Canvas Regression Reel</span></a><p>Made for solo game developers.<br>No telemetry. No upload. No account.</p><nav aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-canvas-regression-reel">Source</a></nav></footer>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
