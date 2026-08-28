@@ -22,12 +22,10 @@
     "canvas-reel": "./dist/cli.js"
   },
   "files": [
-    "dist/index.js",
-    "dist/index.cjs",
-    "dist/index.d.ts",
-    "dist/recorder-public.js",
-    "dist/recorder-public.cjs",
-    "dist/recorder-public.d.ts",
+    "dist/*.js",
+    "dist/*.cjs",
+    "dist/*.d.ts",
+    "dist/*.d.cts",
     "dist/cli.js",
     "README.md",
     "CHANGELOG.md",

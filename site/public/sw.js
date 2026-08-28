@@ -1,8 +1,19 @@
 const CACHE = 'canvas-reel-shell-v1'
-const SHELL = ['/', '/privacy/', '/terms/', '/instrument-reel.webp', '/favicon.svg']
+const PAGES = ['/', '/privacy/', '/terms/']
+const MEDIA = ['/instrument-reel.webp', '/instrument-reel-720.webp', '/favicon.svg']
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)))
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE)
+    const assets = new Set(MEDIA)
+    for (const page of PAGES) {
+      const response = await fetch(page)
+      await cache.put(page, response.clone())
+      const html = await response.text()
+      for (const match of html.matchAll(/(?:src|href)="(\/assets\/[^\"]+)"/g)) assets.add(match[1])
+    }
+    await cache.addAll([...assets])
+  })())
   self.skipWaiting()
 })
 
