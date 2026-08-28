@@ -7,6 +7,11 @@ const root = resolve(import.meta.dirname, '../../dist/site')
 const headersFile = await readFile(resolve(root, '_headers'), 'utf8')
 const immutable = /Cache-Control: public, max-age=31536000, immutable/.test(headersFile)
 if (!immutable) throw new Error('The deployment _headers file must declare immutable fingerprinted asset caching.')
+const staticConfig = JSON.parse(await readFile(resolve(root, 'staticwebapp.config.json'), 'utf8'))
+const immutableRoutes = new Set(staticConfig.routes
+  .filter((route) => route.headers?.['Cache-Control'] === 'public, max-age=31536000, immutable')
+  .map((route) => route.route))
+if (!immutableRoutes.has('/assets/*')) throw new Error('Azure Static Web Apps config must cache fingerprinted assets immutably.')
 
 const types = {
   '.css': 'text/css; charset=utf-8', '.html': 'text/html; charset=utf-8',
@@ -15,7 +20,7 @@ const types = {
 }
 
 function cacheControl(path) {
-  if (path.startsWith('/assets/') || /^\/instrument-reel-[\da-f]+\.webp$/.test(path) || /^\/instrument-reel-720-[\da-f]+\.webp$/.test(path)) {
+  if (path.startsWith('/assets/') || immutableRoutes.has(path)) {
     return 'public, max-age=31536000, immutable'
   }
   return 'public, max-age=0, must-revalidate'

@@ -31,6 +31,25 @@ let index = await readFile(resolve(siteDir, 'index.html'), 'utf8')
 for (const hero of heroes) index = index.replaceAll(hero.original, hero.fingerprinted)
 await writeFile(resolve(siteDir, 'index.html'), index)
 
+// Azure Static Web Apps reads this file at deploy time. _headers is retained
+// for static hosts that use that convention, while this generated config names
+// the two fingerprinted image paths exactly.
+await writeFile(resolve(siteDir, 'staticwebapp.config.json'), `${JSON.stringify({
+  navigationFallback: {
+    rewrite: '/index.html',
+    exclude: ['/assets/*', '/*.{css,js,png,jpg,svg,webp,ico,woff2,json,txt,xml,wasm}'],
+  },
+  globalHeaders: {
+    'Cache-Control': 'public, max-age=0, must-revalidate',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-Content-Type-Options': 'nosniff',
+  },
+  routes: [
+    { route: '/assets/*', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+    ...heroes.map(({ fingerprinted }) => ({ route: fingerprinted, headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } })),
+  ],
+}, null, 2)}\n`)
+
 const files = await filesIn(siteDir)
 const precache = ['/', '/privacy/', '/terms/', ...files
   .filter((file) => file.startsWith('assets/') || file.startsWith('instrument-reel-') || file === 'favicon.svg')

@@ -17,9 +17,10 @@ Repaired both release blockers from the independent verification report.
   registered with `updateViaCache: 'none'`; it removes only previous
   `canvas-reel-shell-*` caches after activation.
 - Responsive hero WebPs are fingerprinted during `npm run build:site`, so they
-  can safely receive immutable caching. `site/public/_headers` declares one
-  year immutable caching for fingerprinted assets and revalidation for HTML
-  and `sw.js`.
+  can safely receive immutable caching. The generated Azure Static Web Apps
+  `staticwebapp.config.json` (plus portable `site/public/_headers`) declares
+  one year immutable caching for fingerprinted assets and revalidation for
+  HTML and `sw.js`.
 - Production browser tests now use the built static site, not Vite dev mode.
   They assert a versioned cache, cached application entry, interactive offline
   reload, and cache response policy.
@@ -64,9 +65,10 @@ No third-party assets, telemetry, or upload path were added.
 
 ## Deploy and release
 
-Deploy the generated `dist/site` directory unchanged, including `_headers` and
-the generated `sw.js`. For npm release, the factory should publish the packed
-tarball with its managed credentials; this worker did not publish it.
+Deploy the generated `dist/site` directory unchanged, including
+`staticwebapp.config.json`, `_headers`, and the generated `sw.js`. For npm
+release, the factory should publish the packed tarball with its managed
+credentials; this worker did not publish it.
 
 After the static deployment settles, confirm the live root, `sw.js`, a current
 `/assets/main-*.js`, and both current `/instrument-reel-*.webp` responses match

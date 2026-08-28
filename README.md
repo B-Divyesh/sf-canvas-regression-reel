@@ -99,7 +99,8 @@ deployment root is `dist/site`. Its generated service worker precaches the
 current documentation shell for offline use; fingerprinted scripts, styles,
 and responsive hero images are safe to cache immutably, while HTML and
 `sw.js` revalidate on every release. Deploy `dist/site` together with its
-generated `_headers` file so that cache policy is preserved.
+generated `staticwebapp.config.json` (and `_headers` for compatible static
+hosts) so that cache policy is preserved.
 
 ## Privacy and security
 
