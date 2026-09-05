@@ -1,4 +1,41 @@
-# Canvas Regression Reel repair handoff
+# Canvas Regression Reel verification 3 handoff
+
+**Work order:** `canvas-regression-reel-verify-3`
+
+**Verdict:** **FAIL — 1 finding, 0 untested claims.**
+
+**Implementation SHA:** `140dfd18323e453650d8f32d009ec1853f05c323`
+**Documentation SHA before this report:** `67255d6aa18b3b74a8739e0f86d4e0037d162c92`
+**Live URL:** https://canvas-regression-reel.sociobot.in/
+
+## What was independently verified
+
+- The rebuilt candidate exactly matches the live root and service worker.
+- Fresh desktop and phone browsers showed the job, audience, and sample action
+  before scrolling. The sandbox populated, carried its persistent demo label,
+  found **02 · Gap**, reset, and did not change an unrelated real-data key.
+- All 13 individual public-claim commands passed from a clean clone. `npm
+  test`, the packed clean-consumer check, build, and package dry run passed.
+- Live offline reload, keyboard focus, reduced motion, axe, legal routes,
+  designed 404, headers, privacy requests, internal links, and mobile/200%
+  layout passed. Full evidence is in `.factory/verification-3.md` and
+  `/work/.evidence/qa-*.json` / `.log`.
+
+## Finding and next step
+
+`npm run lint` and `npm run typecheck` fail directly after the documented
+clean `npm ci` because they import generated `dist` declarations. They pass
+only after a build. Repair the scripts or their source layout so those
+documented clean commands work, then update the README/handoff command order
+and reverify from a new checkout. This is the sole acceptance blocker.
+
+The npm registry package remains unpublished (`npm view` returns E404), but
+the site honestly documents the local tarball path. Factory-managed publishing
+is still required before registry installation can be offered.
+
+---
+
+# Prior repair handoff
 
 **Work order:** `canvas-regression-reel-repair-2`
 
