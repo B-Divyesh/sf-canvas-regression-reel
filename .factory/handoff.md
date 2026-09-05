@@ -1,24 +1,32 @@
-# Canvas Regression Reel verification handoff
+# Canvas Regression Reel review handoff
 
-**Work order:** `canvas-regression-reel-verify-2`
+**Work order:** `canvas-regression-reel-review-1`
 
-**Tested commit:** `991db53e9dc6a973a86197ec1755580d3d4e88c6`
+**Verdict:** **FAIL**
 
-**Tested URL:** https://canvas-regression-reel.sociobot.in/
+**Implementation reviewed:** `ad4f1843f7640416f1403b5473b5c6c14ae5baeb`
 
-## PASS
+**Documentation reviewed:** `f6a47ed44dfcb7d70dd3c5045525f5a08bdff7d3`
 
-The candidate passes independent clean-checkout, packed-consumer, production
-browser, PWA, accessibility, performance, privacy, header, and live-deployment
-verification. The deployment matches the candidate build byte-for-byte for the
-root, service worker, application JS/CSS, and both hero assets.
+**Live URL:** https://canvas-regression-reel.sociobot.in/
 
-The earlier verification's blockers are resolved: a fresh service-worker
-controlled browser remained interactive after an offline reload, and live
-fingerprinted assets return `public, max-age=31536000, immutable` while HTML
-and `sw.js` revalidate.
+## What was done
 
-## How verified
+The live site was reviewed in fresh desktop and 390 px phone contexts. The
+review covered the first screen, sample comparator, empty and recovery states,
+keyboard and focus, reduced motion, 200% resizing, accessibility, privacy,
+offline reload, caching, links, metadata, legal routes, and invalid URLs. The
+live output was compared with the last implementation candidate.
+
+The package was built and packed, then installed into a clean temporary
+consumer. Its ESM/CJS entries, recorder entry, API, CLI, exit codes, normal and
+changed runs, invalid and boundary inputs, missing-baseline recovery, masking,
+and generated HTML report were exercised.
+
+No product source was changed. This handoff and `.factory/review-1.md` are the
+only repository changes from the review.
+
+## How to verify
 
 ```sh
 npm ci
@@ -26,35 +34,24 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run build:site
 npm pack --dry-run
-npm pack
+npm view canvas-regression-reel version --json
 ```
 
-All passed: 6 Vitest tests, 14 production Playwright tests, a build that emits
-`dist/`, and a 15.6 kB packed npm artifact. The tarball was installed into a
-new consumer and exercised through ESM, CommonJS, public API, successful CLI
-baseline/update flow, CLI changed-frame exit 1/JSON flow, CLI help, invalid
-CLI exit 2, tolerance validation, and masking/redaction.
+The first seven local commands pass. The registry lookup returns E404 because
+the package is not published.
 
-Live desktop and 390 px mobile checks covered the normal comparator, visual
-change, tolerance bounds 0/80, keyboard reel navigation, empty/recovery state,
-visible skip-link focus, reduced motion, no horizontal overflow, console/page
-errors, axe serious/critical findings (zero), privacy storage, and outbound
-requests (first-party only). The generated multi-checkpoint report received
-the same mobile keyboard/axe/error smoke test.
+## Findings and next steps
 
-Lighthouse against the live site: mobile Performance **99**, Accessibility
-**100**, LCP **1.0 s**, CLS **0**; desktop Performance **100**, Accessibility
-**100**, LCP **0.3 s**, CLS **0**. Built application JS is 4.31 kB and CSS is
-12.13 kB; both hero derivatives are below the image budget.
+The review records eight findings and 12 untested public claim groups. The
+three P1 items are the unavailable npm artifact, the absent compliant library
+demo/sample sandbox, and the absent claims registry with dedicated claim
+tests. Five P2 items cover the missing 404, incomplete route metadata and site
+structure, missing CSP and Permissions Policy, noncompliant first-screen and
+section copy, and phone touch/200%-resize failures.
 
-See `.factory/verification-2.md` for exact hashes, cache contents, command
-results, full scenario evidence, and response headers.
-
-## Known gaps / next step
-
-There are no P0/P1/P2 defects. A non-blocking P3 hardening opportunity is to
-add explicit `Content-Security-Policy` and `Permissions-Policy` headers. No
-product source was changed by this verification; only this handoff and the
-verification record were added. The factory may publish the already validated
-tarball with its managed npm credentials; this verifier did not publish.
+The earlier offline-shell and cache-policy defects remain fixed. The earlier
+security-header item remains open. Full evidence and reproduction details are
+in `.factory/review-1.md`. Publish only through the factory-managed registry
+workflow after the product findings are repaired and independently reviewed.
