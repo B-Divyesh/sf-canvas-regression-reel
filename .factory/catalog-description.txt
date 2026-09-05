@@ -1,0 +1,1 @@
+Find changed browser-game canvas frames with seeded replay and local HTML reports.

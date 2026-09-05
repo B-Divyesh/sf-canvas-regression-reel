@@ -1,22 +1,35 @@
 # Canvas Regression Reel
 
-Deterministic canvas checkpoints in; a reviewable regression reel out. Canvas
-Regression Reel is a local-first npm library and CLI for solo browser-game
-developers who need visual evidence from real input sequences—not another DOM
-snapshot tool or a folder of manual screenshots.
+Canvas Regression Reel finds the first changed browser-game canvas frame. It is
+for solo browser-game developers who need visual evidence before they ship.
 
-It seeds the page before game code runs, replays keyboard and pointer actions,
-captures only the selected canvas, compares PNG pixels with an explicit
-tolerance, and writes a self-contained HTML report. It never uploads artifacts.
+The runner replays a seeded checkpoint list in Chromium, captures the canvas
+selector you choose, compares pixels with an explicit per-channel tolerance,
+and writes one self-contained HTML report. It is local-first: the package has
+no account, telemetry, cloud service, or artifact upload.
 
-## Install
+## Try the sample
+
+Open [the sample demo](https://canvas-regression-reel.sociobot.in/demo/?demo=1).
+It uses a seeded three-checkpoint canvas run in a `demo:` browser-storage
+namespace. **Reset demo** discards its sample state. The demo works offline
+after its first visit.
+
+## Install from this repository
+
+The public npm registry package is not released yet. The factory-managed npm
+publish is the remaining external release dependency. Until it is released,
+build and install the local tarball:
 
 ```sh
-npm install --save-dev canvas-regression-reel playwright
+npm ci
+npm run build
+npm pack
+npm install --save-dev ./canvas-regression-reel-0.1.0.tgz playwright
 npx playwright install chromium
 ```
 
-## Usage
+## Use the runner
 
 Create `reel.config.mjs`:
 
@@ -48,66 +61,64 @@ export default defineConfig({
 })
 ```
 
-Create or intentionally replace baselines:
+Create approved baselines only after reviewing them:
 
 ```sh
 npx canvas-reel run reel.config.mjs --update
 ```
 
-Then compare locally or in CI:
+Run the comparison in a local terminal or CI:
 
 ```sh
 npx canvas-reel run reel.config.mjs
 npx canvas-reel run reel.config.mjs --json
 ```
 
-The command exits `0` when all checkpoints pass and `1` for a visual change,
-missing baseline, or run error. `--json` prints one machine-readable result to
-stdout. Open the configured report to inspect the first changed frame, baseline,
-current render, diff, thresholds, and masked regions. Use `--help` for options.
+The command exits `0` when every checkpoint passes, `1` for a changed or
+missing checkpoint or run error, and `2` for an invalid command or unloaded
+config. `--json` writes one machine-readable result to standard output.
 
-### In-page recorder
+The report names the first changed checkpoint and embeds baseline, current, and
+difference images as data URLs. Masks are excluded from the comparison and
+redacted in report images.
 
-The browser-safe `canvas-regression-reel/recorder` entry exports
-`createRecorder()` for tools that need to collect a seeded pointer/keyboard
-trace in the browser. `comparePng()`, `buildReport()`, `runReel()`, and all
-config/result types are exported from the main Node entry for custom runners.
+## Browser recorder and playground
 
-## Determinism contract
+`canvas-regression-reel/recorder` exports `createRecorder()` for recording
+canvas-relative pointer and keyboard actions. The sample playground uses the
+browser-safe `canvas-regression-reel/browser` entry to compare its displayed
+RGBA frame data.
 
-The runner installs a seeded `Math.random` and exposes the string at
-`window.__CANVAS_REEL_SEED__` before navigation. A game with other sources of
-entropy should provide a `setup(page, seed)` callback in its config. Animation
-timing still belongs to the game: use fixed timesteps and explicit `wait`
-actions. Masks exclude volatile or user-supplied rectangles from comparison and
-redact those rectangles in the HTML report.
+The runner installs a seeded `Math.random` and provides the seed at
+`window.__CANVAS_REEL_SEED__` before navigation. Games with other entropy
+sources should use the `setup(page, seed)` callback and fixed timesteps.
 
-## Develop, test, and package
+## Develop and verify
 
-Requires Node.js 20+.
+Node.js 20 or newer is required.
 
 ```sh
 npm ci
+npm run lint
+npm run typecheck
 npm test
-npm run build       # library -> dist/, site -> dist/site/
-npm run build:site  # documentation site only -> dist/site/
+npm run test:consumer
+npm run build
 npm pack --dry-run
 ```
 
-`npm run dev` starts the documentation and live comparison demo. The static
-deployment root is `dist/site`. Its generated service worker precaches the
-current documentation shell for offline use; fingerprinted scripts, styles,
-and responsive hero images are safe to cache immutably, while HTML and
-`sw.js` revalidate on every release. Deploy `dist/site` together with its
-generated `staticwebapp.config.json` (and `_headers` for compatible static
-hosts) so that cache policy is preserved.
+Every public product claim is listed in `.factory/claims.json`. Run one claim
+from a clean checkout with its documented command, for example:
 
-## Privacy and security
+```sh
+npm run test:claims -- --grep @claim:offline-demo
+```
 
-There is no telemetry, account, cloud service, or network upload in the package
-or site. Reports embed local frames as data URLs and may contain game imagery;
-keep CI artifacts private when the game is private. Masks are applied to report
-images as well as comparison. See the site privacy and terms pages.
+`npm run build` creates the library in `dist/` and the static site in
+`dist/site/`. Deploy that site directory with its generated
+`staticwebapp.config.json`. It sets immutable caching for fingerprinted assets,
+revalidates documents and the service worker, includes CSP and Permissions
+Policy headers, and returns a designed 404 page.
 
 ## License
 

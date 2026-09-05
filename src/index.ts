@@ -2,6 +2,8 @@ export { comparePng, redactPng } from './compare.js'
 export type { PngComparison } from './compare.js'
 export { createRecorder } from './recorder.js'
 export type { Recorder, RecorderOptions } from './recorder.js'
+export { compareFrameData } from './browser.js'
+export type { BrowserComparison, BrowserRect } from './browser.js'
 export { buildReport } from './report.js'
 export { defineConfig, runReel } from './runner.js'
 export type {

@@ -35,15 +35,14 @@ await writeFile(resolve(siteDir, 'index.html'), index)
 // for static hosts that use that convention, while this generated config names
 // the two fingerprinted image paths exactly.
 await writeFile(resolve(siteDir, 'staticwebapp.config.json'), `${JSON.stringify({
-  navigationFallback: {
-    rewrite: '/index.html',
-    exclude: ['/assets/*', '/*.{css,js,png,jpg,svg,webp,ico,woff2,json,txt,xml,wasm}'],
-  },
   globalHeaders: {
     'Cache-Control': 'public, max-age=0, must-revalidate',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'X-Content-Type-Options': 'nosniff',
+    'Content-Security-Policy': "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; form-action 'self'",
+    'Permissions-Policy': 'accelerometer=(), autoplay=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()',
   },
+  responseOverrides: { '404': { rewrite: '/404.html' } },
   routes: [
     { route: '/assets/*', headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
     ...heroes.map(({ fingerprinted }) => ({ route: fingerprinted, headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } })),
@@ -51,7 +50,7 @@ await writeFile(resolve(siteDir, 'staticwebapp.config.json'), `${JSON.stringify(
 }, null, 2)}\n`)
 
 const files = await filesIn(siteDir)
-const precache = ['/', '/privacy/', '/terms/', ...files
+const precache = ['/', '/demo/', '/privacy/', '/terms/', '/404.html', ...files
   .filter((file) => file.startsWith('assets/') || file.startsWith('instrument-reel-') || file === 'favicon.svg')
   .map((file) => `/${file}`)]
 const manifest = await Promise.all(precache.map(async (path) => {

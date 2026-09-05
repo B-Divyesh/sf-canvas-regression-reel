@@ -83,5 +83,9 @@ included.
 - The production build fingerprints both responsive WebP derivatives before
   deployment, so their long-lived immutable cache entries can never point at a
   later image revision.
+- `site/public/social-card.jpg` and `site/public/apple-touch-icon.png` are
+  local crops of that same original generated instrument illustration. They
+  carry no required text and provide the required social and device-preview
+  assets without introducing a second asset source.
 - Demo game frames are rendered at runtime from original Canvas 2D code. Icons
   are hand-authored inline SVG with `currentColor`; no external icon set.
